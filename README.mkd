@@ -1,0 +1,24 @@
+This is a simple example that shows how zeromq can listen to bonjour service
+announcements. It's based off code from http://code.google.com/p/pybonjour.
+
+To run, first start the bonjour forwarder, which converts bonjour registrations
+to zeromq. It will forward any bonjour registrations of type "_test._tcp":
+
+    % bin/bonjour-forwarder 'tcp://*:8890' _test._tcp
+
+Then, start a simple zeromq listener, which has no knowledge of bonjour:
+
+    % bin/bonjour-listener 'tcp://localhost:8890'
+
+Finally, start a bonjour service:
+
+    % bin/bonjour-service TestService _test._tcp 1234
+
+The `bin/bonjour-listener` should print out this json message:
+
+    {"fullname":"TestService._test._tcp.local.","hosttarget":"hostname","type":"resolved","port":1234}
+
+If you kill `bin/bonjour-service`, the `bin/bonjour-listener` should then print
+out:
+
+    {"domain":"local.","type":"disconnect","name":"TestService"}
