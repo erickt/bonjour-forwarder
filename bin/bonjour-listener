@@ -1,0 +1,18 @@
+#!/usr/bin/python
+
+import sys
+import zmq
+
+def main():
+    ctx = zmq.Context(1)
+    socket = ctx.socket(zmq.SUB)
+    socket.setsockopt(zmq.SUBSCRIBE, '')
+    socket.connect(sys.argv[1])
+
+    while True:
+        rlist, wlist, xlist = zmq.select([socket], [], [], 1)
+        if socket in rlist:
+            print socket.recv()
+
+if __name__ == '__main__':
+    sys.exit(main())
